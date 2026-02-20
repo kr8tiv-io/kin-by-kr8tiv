@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: kin-mint-api
+    runtime: node
+    rootDir: mint-api
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: SOLANA_RPC_URL
+        value: https://madelena-tbtq8y-fast-mainnet.helius-rpc.com
+      - key: SOLANA_COMMITMENT
+        value: confirmed
+      - key: TREASURY_WALLET
+        value: 7BLHKsHRGjsTKQdZYaC3tRDeUChJ9E2XsMPpg2Tv23cf
+      - key: COLLECTION_ADDRESS
+        value: BaWgt3aengftgbQnu8fvc43jAc7AnMDwQMkotJuNobTz
+      - key: MERKLE_TREE_ADDRESS
+        value: 6VQzo6mPiyT11SR8GMuT7A6QtgmTXFa5JPp5QDXk9U1h
+      - key: INTENT_TTL_SECONDS
+        value: 1200
+      - key: CORS_ORIGIN
+        value: https://meetyourkin.com
+      - key: MINT_STATE_PATH
+        value: ./data/mint-state.json
+      - key: TREASURY_PRIVATE_KEY_ENCRYPTED
+        sync: false
+      - key: TREASURY_KEY_PASSPHRASE
+        sync: false
