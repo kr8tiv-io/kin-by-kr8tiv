@@ -643,7 +643,7 @@
             <!-- Egg -->
             <div class="gs-card mint-card" style="position:relative; background:rgba(255,255,255,0.02); border:none; border-radius:20px; padding:0 0 2.5rem 0; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); overflow:hidden; transition:transform 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 20px 60px rgba(255,184,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                 <div style="position:relative; width:100%; height:auto; aspect-ratio:784/1168; overflow:hidden; border-radius:20px 20px 0 0;">
-                    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.7;"><source src="mint-egg-video.mp4" type="video/mp4"></video>
+                    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.7;"><source src="nft-videos/mint-egg-video.mp4" type="video/mp4"></video>
                     <div style="position:absolute; bottom:0; left:0; right:0; height:80px; background:linear-gradient(transparent, rgba(10,10,15,1));"></div>
                 </div>
                 <div style="padding:0 2.5rem;">
@@ -664,7 +664,7 @@
             <!-- Hatchling -->
             <div class="gs-card mint-card" style="position:relative; background:rgba(255,255,255,0.03); border:none; border-radius:20px; padding:0 0 2.5rem 0; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); overflow:hidden; transition:transform 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 20px 60px rgba(0,240,255,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                 <div style="position:relative; width:100%; height:auto; aspect-ratio:784/1168; overflow:hidden; border-radius:20px 20px 0 0;">
-                    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.7;"><source src="mint-hatch-video.mp4" type="video/mp4"></video>
+                    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.7;"><source src="nft-videos/mint-hatch-video.mp4" type="video/mp4"></video>
                     <div style="position:absolute; bottom:0; left:0; right:0; height:80px; background:linear-gradient(transparent, rgba(10,10,15,1));"></div>
                     <div style="position:absolute; top:1rem; right:1rem; font-family:'JetBrains Mono',monospace; font-size:0.55rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--cyan); background:rgba(0,240,255,0.15); padding:0.3rem 0.8rem; border-radius:20px; border:1px solid rgba(0,240,255,0.2); backdrop-filter:blur(10px);">Most Popular</div>
                 </div>
@@ -686,7 +686,7 @@
             <!-- Elder -->
             <div class="gs-card mint-card" style="position:relative; background:rgba(255,255,255,0.02); border:none; border-radius:20px; padding:0 0 2.5rem 0; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); overflow:hidden; transition:transform 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 20px 60px rgba(255,0,170,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                 <div style="position:relative; width:100%; height:auto; aspect-ratio:784/1168; overflow:hidden; border-radius:20px 20px 0 0;">
-                    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.7;"><source src="mint-elder-video.mp4" type="video/mp4"></video>
+                    <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.7;"><source src="nft-videos/mint-elder-video.mp4" type="video/mp4"></video>
                     <div style="position:absolute; bottom:0; left:0; right:0; height:80px; background:linear-gradient(transparent, rgba(10,10,15,1));"></div>
                 </div>
                 <div style="padding:0 2.5rem;">
@@ -1211,7 +1211,32 @@
 
         const TREASURY = '7BLHKsHRGjsTKQdZYaC3tRDeUChJ9E2XsMPpg2Tv23cf';
         const SOLANA_RPC = 'https://api.mainnet-beta.solana.com';
-        const MINT_API_BASE = window.KIN_MINT_API_BASE || '/api/mint';
+        function buildMintApiCandidates() {
+            const candidates = [];
+            const explicitBase = String(
+                window.KIN_MINT_API_BASE ||
+                document.querySelector('meta[name="kin-mint-api-base"]')?.content ||
+                ''
+            ).trim();
+
+            if (explicitBase) {
+                candidates.push(explicitBase.replace(/\/+$/, ''));
+            }
+
+            const origin = window.location.origin;
+            candidates.push(`${origin}/api/mint`);
+
+            const pathname = window.location.pathname || '/';
+            const pageDir = pathname.endsWith('/')
+                ? pathname
+                : pathname.replace(/\/[^/]*$/, '/');
+            candidates.push(`${origin}${pageDir}api/mint`);
+
+            return [...new Set(candidates)];
+        }
+
+        const MINT_API_BASE_CANDIDATES = buildMintApiCandidates();
+        let activeMintApiBase = null;
         const MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
 
         const TIERS = {
@@ -1285,7 +1310,26 @@
 
         async function refreshMintConfig() {
             try {
-                const config = await fetchJson(`${MINT_API_BASE}/config`);
+                let config = null;
+                let lastError = null;
+                const candidates = activeMintApiBase
+                    ? [activeMintApiBase]
+                    : MINT_API_BASE_CANDIDATES;
+
+                for (const base of candidates) {
+                    try {
+                        config = await fetchJson(`${base}/config`);
+                        activeMintApiBase = base;
+                        break;
+                    } catch (error) {
+                        lastError = error;
+                    }
+                }
+
+                if (!config) {
+                    throw lastError || new Error('Mint API config request failed');
+                }
+
                 ['egg', 'hatchling', 'elder'].forEach((tier) => {
                     tierAvailability[tier] = Number(config?.tiers?.[tier]?.available ?? 0) > 0;
                     const button = document.querySelector(`.mint-btn[data-tier="${tier}"]`);
@@ -1297,7 +1341,7 @@
             } catch (error) {
                 const status = document.getElementById('wallet-status');
                 if (status) {
-                    status.textContent = 'Mint API not reachable. Please try again in a moment.';
+                    status.textContent = 'Mint API not reachable. Set KIN_MINT_API_BASE to your deployed mint API endpoint.';
                     status.style.color = 'var(--magenta)';
                 }
             }
@@ -1356,7 +1400,14 @@
                 status.style.color = tierInfo.color;
 
                 const buyer = connectedWallet.toString();
-                const intent = await fetchJson(`${MINT_API_BASE}/intent`, {
+                if (!activeMintApiBase) {
+                    await refreshMintConfig();
+                }
+                if (!activeMintApiBase) {
+                    throw new Error('Mint API unavailable. Transaction blocked before payment.');
+                }
+
+                const intent = await fetchJson(`${activeMintApiBase}/intent`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tier, buyerWallet: buyer })
@@ -1405,7 +1456,7 @@
                 button.textContent = 'Delivering NFT...';
                 status.textContent = 'Payment confirmed. Delivering your cNFT...';
 
-                const delivery = await fetchJson(`${MINT_API_BASE}/finalize`, {
+                const delivery = await fetchJson(`${activeMintApiBase}/finalize`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
