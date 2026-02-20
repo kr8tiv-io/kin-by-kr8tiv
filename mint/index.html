@@ -370,6 +370,7 @@
             hatchling: { name: 'Hatchling', sol: 5.3, color: '#00F0FF' },
             elder: { name: 'Elder', sol: 8.3, color: '#FF00AA' }
         };
+        const LAMPORTS_PER_SOL = 1000000000;
 
         const tierAvailability = {
             egg: true,
@@ -424,6 +425,32 @@
         function defaultButtonLabel(tier) {
             const tierInfo = TIERS[tier];
             return `Mint ${tierInfo.name} -- ${tierInfo.sol} SOL`;
+        }
+
+        function expectedLamportsForTier(tier) {
+            return Math.round(TIERS[tier].sol * LAMPORTS_PER_SOL);
+        }
+
+        function assertTrustedTreasuryAddress(value, source) {
+            const normalized = String(value ?? '').trim();
+            if (normalized !== TREASURY) {
+                throw new Error(`Untrusted treasury from ${source}. Payment blocked.`);
+            }
+            return normalized;
+        }
+
+        function assertIntentPricingMatchesTier(tier, intent) {
+            const expectedLamports = expectedLamportsForTier(tier);
+            const expectedSol = TIERS[tier].sol;
+            const actualLamports = Number(intent?.lamports);
+            const actualSol = Number(intent?.sol);
+
+            if (!Number.isFinite(actualLamports) || actualLamports !== expectedLamports) {
+                throw new Error('Intent lamports do not match tier pricing. Payment blocked.');
+            }
+            if (!Number.isFinite(actualSol) || Math.abs(actualSol - expectedSol) > 1e-9) {
+                throw new Error('Intent SOL amount does not match tier pricing. Payment blocked.');
+            }
         }
 
         function showToast(message, type) {
@@ -494,6 +521,7 @@
                 if (!config) {
                     throw lastError || new Error('Mint API config request failed');
                 }
+                assertTrustedTreasuryAddress(config?.treasury, 'mint config');
 
                 ['egg', 'hatchling', 'elder'].forEach((tier) => {
                     tierAvailability[tier] = Number(config?.tiers?.[tier]?.available ?? 0) > 0;
@@ -591,13 +619,18 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ tier, buyerWallet })
                 });
+                if (!intent?.intentId) {
+                    throw new Error('Mint intent is missing intentId.');
+                }
+                const treasuryFromIntent = assertTrustedTreasuryAddress(intent?.treasury, 'mint intent');
+                assertIntentPricingMatchesTier(tier, intent);
 
                 const connection = new solanaWeb3.Connection(SOLANA_RPC, 'confirmed');
                 const transaction = new solanaWeb3.Transaction();
                 transaction.add(
                     solanaWeb3.SystemProgram.transfer({
                         fromPubkey: connectedWallet,
-                        toPubkey: new solanaWeb3.PublicKey(TREASURY),
+                        toPubkey: new solanaWeb3.PublicKey(treasuryFromIntent),
                         lamports: Number(intent.lamports)
                     })
                 );

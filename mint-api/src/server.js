@@ -6,6 +6,7 @@ import { PublicKey } from "@solana/web3.js";
 
 import { buildConfig, TIER_CONFIG } from "./config.js";
 import { createChainClients, fetchTierInventory, transferCompressedAsset, verifyPaymentSignature } from "./chain.js";
+import { assertPaymentSignatureFormat, createRateLimiter } from "./security.js";
 import { JsonStateStore } from "./state-store.js";
 
 function nowIso() {
@@ -50,8 +51,18 @@ async function main() {
   await store.init();
 
   const app = express();
+  app.disable("x-powered-by");
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    next();
+  });
   app.use(cors({ origin: cfg.corsOrigin === "*" ? true : cfg.corsOrigin }));
   app.use(express.json({ limit: "128kb" }));
+
+  const intentLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 60 });
+  const finalizeLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 120 });
 
   app.get("/api/mint/health", (_req, res) => {
     res.json({ ok: true, time: nowIso() });
@@ -85,7 +96,7 @@ async function main() {
     }
   });
 
-  app.post("/api/mint/intent", async (req, res) => {
+  app.post("/api/mint/intent", intentLimiter, async (req, res) => {
     try {
       const tier = String(req.body?.tier ?? "").toLowerCase();
       const buyerWallet = assertPublicKey(req.body?.buyerWallet, "buyerWallet");
@@ -140,12 +151,13 @@ async function main() {
     }
   });
 
-  app.post("/api/mint/finalize", async (req, res) => {
+  app.post("/api/mint/finalize", finalizeLimiter, async (req, res) => {
     const intentId = String(req.body?.intentId ?? "");
-    const paymentSignature = String(req.body?.paymentSignature ?? "").trim();
+    const rawPaymentSignature = String(req.body?.paymentSignature ?? "").trim();
 
     try {
       const buyerWallet = assertPublicKey(req.body?.buyerWallet, "buyerWallet");
+      const paymentSignature = assertPaymentSignatureFormat(rawPaymentSignature);
 
       const outcome = await store.runExclusive(async (state) => {
         const intent = state.intents[intentId];
@@ -166,10 +178,6 @@ async function main() {
 
         if (intent.status === "created" && Date.now() > Date.parse(intent.expiresAt)) {
           throw new Error("Mint intent expired. Create a new intent.");
-        }
-
-        if (!paymentSignature) {
-          throw new Error("paymentSignature is required");
         }
 
         const usedBy = state.usedPaymentSignatures[paymentSignature];
@@ -296,7 +304,12 @@ async function main() {
         assetExplorer: `https://solscan.io/token/${intent.assetId}`
       });
     } catch (error) {
-      return res.status(400).json({ ok: false, error: String(error?.message ?? error), intentId, paymentSignature });
+      return res.status(400).json({
+        ok: false,
+        error: String(error?.message ?? error),
+        intentId,
+        paymentSignature: rawPaymentSignature
+      });
     }
   });
 

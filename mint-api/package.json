@@ -17,5 +17,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2"
+  },
+  "overrides": {
+    "ethjs-unit": {
+      "bn.js": "^5.2.3"
+    },
+    "number-to-bn": {
+      "bn.js": "^5.2.3"
+    }
   }
 }
