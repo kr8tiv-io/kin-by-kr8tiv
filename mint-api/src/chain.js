@@ -11,6 +11,7 @@ import { getAssetWithProof, mplBubblegum, transfer } from "@metaplex-foundation/
 
 import { buildTierInventory } from "./inventory.js";
 import { verifyParsedPayment } from "./payment.js";
+import { decryptTreasuryPrivateKey } from "./secret-key.js";
 
 function toBase58(value) {
   return String(value?.toString?.() ?? value ?? "");
@@ -35,7 +36,8 @@ export function createChainClients(config) {
   const connection = new Connection(config.rpcUrl, config.commitment);
   const umi = createUmi(config.rpcUrl).use(dasApi()).use(mplBubblegum());
 
-  const secretKey = decodeSecretKey(config.treasuryPrivateKey);
+  const treasuryPrivateKey = decryptTreasuryPrivateKey(config);
+  const secretKey = decodeSecretKey(treasuryPrivateKey);
   const keypair = umi.eddsa.createKeypairFromSecretKey(secretKey);
   umi.use(keypairIdentity(keypair, true));
 

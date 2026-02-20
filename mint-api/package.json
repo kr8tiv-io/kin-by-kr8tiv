@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "encrypt:key": "node scripts/encrypt-secret.mjs"
   },
   "dependencies": {
     "@metaplex-foundation/digital-asset-standard-api": "^2.0.0",

@@ -15,6 +15,8 @@ export function buildConfig() {
     commitment: process.env.SOLANA_COMMITMENT ?? "confirmed",
     treasuryWallet: process.env.TREASURY_WALLET ?? "",
     treasuryPrivateKey: process.env.TREASURY_PRIVATE_KEY ?? "",
+    treasuryPrivateKeyEncrypted: process.env.TREASURY_PRIVATE_KEY_ENCRYPTED ?? "",
+    treasuryKeyPassphrase: process.env.TREASURY_KEY_PASSPHRASE ?? "",
     collectionAddress: process.env.COLLECTION_ADDRESS ?? "",
     merkleTreeAddress: process.env.MERKLE_TREE_ADDRESS ?? "",
     intentTtlSeconds: Number(process.env.INTENT_TTL_SECONDS ?? 1200),
@@ -24,7 +26,14 @@ export function buildConfig() {
 
   const missing = [];
   if (!cfg.treasuryWallet) missing.push("TREASURY_WALLET");
-  if (!cfg.treasuryPrivateKey) missing.push("TREASURY_PRIVATE_KEY");
+  const hasPlainPrivateKey = String(cfg.treasuryPrivateKey).trim().length > 0;
+  const hasEncryptedPrivateKey = String(cfg.treasuryPrivateKeyEncrypted).trim().length > 0;
+  if (!hasPlainPrivateKey && !hasEncryptedPrivateKey) {
+    missing.push("TREASURY_PRIVATE_KEY or TREASURY_PRIVATE_KEY_ENCRYPTED");
+  }
+  if (hasEncryptedPrivateKey && !String(cfg.treasuryKeyPassphrase).trim()) {
+    missing.push("TREASURY_KEY_PASSPHRASE (required with TREASURY_PRIVATE_KEY_ENCRYPTED)");
+  }
   if (!cfg.collectionAddress) missing.push("COLLECTION_ADDRESS");
   if (!cfg.merkleTreeAddress) missing.push("MERKLE_TREE_ADDRESS");
 
