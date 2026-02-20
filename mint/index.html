@@ -1,0 +1,739 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIN Genesis Mint â Only 60 Will Ever Exist</title>
+    <meta name="description" content="Mint your Genesis KIN on Solana. Three tiers â Egg, Hatchling, Elder. Only 60 will ever exist. Bespoke AI companion with a dedicated human concierge. Built by KR8TIV AI.">
+    <meta name="keywords" content="KIN mint, KR8TIV, Solana NFT, AI companion, Genesis collection, Phantom wallet, AI concierge">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://meetyourkin.com/mint/">
+    <meta property="og:title" content="KIN Genesis Mint â Only 60 Will Ever Exist">
+    <meta property="og:description" content="Three tiers. Six bloodlines. Bespoke AI companions with a dedicated human concierge. Mint your Genesis KIN on Solana.">
+    <meta property="og:image" content="https://meetyourkin.com/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://meetyourkin.com/mint/">
+    <meta name="twitter:title" content="KIN Genesis Mint â Only 60 Will Ever Exist">
+    <meta name="twitter:description" content="Mint your Genesis KIN on Solana. Three tiers. Bespoke AI companions with a dedicated human concierge.">
+    <meta name="twitter:image" content="https://meetyourkin.com/og-image.jpg">
+    <meta name="twitter:site" content="@kr8tivai">
+
+    <!-- Telegram -->
+    <meta property="og:site_name" content="KIN by KR8TIV">
+
+    <link rel="canonical" href="https://meetyourkin.com/mint/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --border: rgba(255,255,255,0.06);
+            --text: #f0f0f0;
+            --text-muted: rgba(255,255,255,0.55);
+            --cyan: #00F0FF;
+            --magenta: #FF00AA;
+            --gold: #FFB800;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        a { color: inherit; text-decoration: none; }
+
+        /* Nav â fixed bar with background so content doesn't overlap */
+        .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: rgba(10,10,15,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .nav-brand .kin-text { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.6rem; color: #fff; letter-spacing: -0.04em; text-decoration: none; }
+        .nav-brand img { height: 22px; opacity: 0.6; filter: brightness(2); margin-left: 0.8rem; vertical-align: middle; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-link { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); transition: color 0.3s; }
+        .nav-link:hover { color: #fff; }
+
+        /* Hero */
+        .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+        .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.6) 80%, var(--bg) 100%); }
+        .hero-grain { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
+        .hero-content { position: relative; z-index: 2; text-align: center; padding: 2rem; max-width: 900px; }
+        .hero-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(4rem, 10vw, 9rem); letter-spacing: -0.04em; line-height: 0.95; color: #fff; margin-bottom: 1.5rem; }
+        .hero-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.4); margin-bottom: 1rem; }
+        .hero-desc { font-size: clamp(1.1rem, 2vw, 1.35rem); color: rgba(255,255,255,0.8); line-height: 1.7; font-weight: 500; max-width: 700px; margin: 0 auto 2.5rem; }
+
+        /* Mint Section */
+        .mint-section { padding: 2rem 2rem 6rem; max-width: 1400px; margin: 0 auto; }
+        .mint-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+        .mint-card { position: relative; background: rgba(255,255,255,0.02); border: none; border-radius: 20px; padding: 0 0 2.5rem 0; backdrop-filter: blur(20px); overflow: hidden; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .mint-card:hover { transform: translateY(-4px); }
+        .mint-card-video { position: relative; width: 100%; aspect-ratio: 784/1168; overflow: hidden; border-radius: 20px 20px 0 0; }
+        .mint-card-video video { width: 100%; height: 100%; object-fit: cover; object-position: center top; opacity: 0.7; }
+        .mint-card-video .fade { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(transparent, rgba(10,10,15,1)); }
+        .mint-card-body { padding: 0 2.5rem; }
+        .tier-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1rem; }
+        .tier-price { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 3.5rem; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.3rem; color: #fff; }
+        .tier-sol { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.4); margin-bottom: 2.5rem; }
+        .tier-features { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+        .tier-feature { display: flex; align-items: flex-start; gap: 0.75rem; }
+        .tier-feature span:first-child { font-size: 0.7rem; margin-top: 2px; }
+        .tier-feature span:last-child { font-size: 0.95rem; color: rgba(255,255,255,0.75); line-height: 1.4; }
+        .tier-avail { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.25); margin-bottom: 1rem; }
+        .mint-btn { display: block; width: 100%; text-align: center; padding: 0.9rem 0; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.3s ease; background: transparent; border: none; }
+        .popular-badge { position: absolute; top: 1rem; right: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cyan); background: rgba(0,240,255,0.15); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid rgba(0,240,255,0.2); backdrop-filter: blur(10px); z-index: 2; }
+
+        /* Wallet button */
+        .wallet-connect { display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.9rem 2.5rem; background: linear-gradient(135deg, rgba(171,71,188,0.15), rgba(103,58,183,0.15)); border: 1px solid rgba(171,71,188,0.4); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: all 0.3s ease; }
+        .wallet-connect:hover { background: linear-gradient(135deg, rgba(171,71,188,0.25), rgba(103,58,183,0.25)); border-color: rgba(171,71,188,0.7); transform: translateY(-2px); }
+        .wallet-connect.connected { border-color: rgba(0,240,255,0.5); background: linear-gradient(135deg, rgba(0,240,255,0.1), rgba(0,240,255,0.05)); }
+
+        /* MoonPay pill */
+        .moonpay-pill { display: inline-flex; align-items: center; gap: 1rem; padding: 1.2rem 2rem; border: 1px solid var(--border); border-radius: 40px; }
+        .moonpay-pill span { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); }
+        .moonpay-pill a { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; transition: opacity 0.3s; }
+        .moonpay-pill a:hover { opacity: 0.7; }
+
+        /* Founders dropdown */
+        .founders-toggle { display: inline-flex; align-items: center; gap: 0.8rem; padding: 0.8rem 2rem; border: 1px solid rgba(255,184,0,0.2); border-radius: 40px; cursor: pointer; transition: all 0.3s ease; }
+        .founders-toggle:hover { border-color: var(--gold); background: rgba(255,184,0,0.04); }
+
+        /* Genesis Six â Large cards */
+        .bloodline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+        .bloodline-card { text-align: center; }
+        .bloodline-video { border-radius: 24px; overflow: hidden; margin-bottom: 1.5rem; aspect-ratio: 1/1; }
+        .bloodline-video video { width: 100%; height: 100%; object-fit: cover; border-radius: 24px; }
+        .bloodline-name { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2rem; color: #fff; margin-bottom: 0.3rem; }
+        .bloodline-type { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); }
+        .bloodline-desc { font-size: 1rem; color: rgba(255,255,255,0.5); line-height: 1.7; margin-top: 0.8rem; }
+
+        /* Toast notification */
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text); z-index: 1000; opacity: 0; transition: all 0.4s ease; pointer-events: none; backdrop-filter: blur(20px); }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { border-color: rgba(0,240,255,0.3); color: var(--cyan); }
+        .toast.error { border-color: rgba(255,0,170,0.3); color: var(--magenta); }
+
+        /* Footer */
+        .mint-footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--border); }
+        .mint-footer a { color: var(--text-muted); font-size: 0.8rem; margin: 0 1rem; transition: color 0.3s; }
+        .mint-footer a:hover { color: #fff; }
+
+        /* Mobile */
+        @media (max-width: 1024px) {
+            .bloodline-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-bar { padding: 0.8rem 1.2rem; }
+            .hero { padding-top: 60px; }
+            .hero-title { font-size: clamp(3rem, 10vw, 5rem); }
+            .mint-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+            .mint-section { padding: 2rem 1rem 4rem; }
+            .bloodline-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .bloodline-name { font-size: 1.5rem; }
+            .bloodline-desc { font-size: 0.9rem; }
+            .mint-card-body { padding: 0 1.5rem; }
+            .tier-price { font-size: 2.8rem; }
+        }
+        @media (max-width: 480px) {
+            .nav-brand .kin-text { font-size: 1.3rem; }
+            .hero-title { font-size: clamp(2.5rem, 12vw, 4rem); }
+            .moonpay-pill { flex-direction: column; gap: 0.5rem; padding: 1rem 1.5rem; }
+            .bloodline-grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            <a href="/" class="kin-text">KIN</a>
+            <a href="https://kr8tiv.ai" target="_blank" rel="noopener"><img src="../kr8tiv-logo.png" alt="KR8TIV"></a>
+        </div>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/#capabilities" class="nav-link">Features</a>
+            <a href="/#bloodlines" class="nav-link">Genesis Six</a>
+            <a href="/mint/" class="nav-link" style="color:var(--cyan);">Mint</a>
+        </div>
+    </nav>
+
+    <!-- Hero with background video -->
+    <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline poster="../hero-poster.jpg">
+            <source src="mint-hero-video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-grain"></div>
+        <div class="hero-content">
+            <p class="hero-subtitle">Genesis Collection</p>
+            <h1 class="hero-title">The Genesis<br>Mint.</h1>
+            <p class="hero-desc">60 bespoke AI companions. Three tiers. Each one unique, fully managed, and yours forever. Powered by the world's best AI models with a dedicated human concierge.</p>
+            <div style="display:flex; align-items:center; justify-content:center; gap:1rem; opacity:0.6;">
+                <img src="https://cdn.simpleicons.org/solana/white" alt="Solana" style="height:30px;">
+                <span style="font-family:'JetBrains Mono',monospace; font-size:1rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.7);">Built on Solana</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mint Section -->
+    <div class="mint-section">
+
+        <!-- Wallet Connect -->
+        <div style="text-align:center; margin-bottom:2.5rem;">
+            <button id="wallet-connect-btn" onclick="connectWallet()" class="wallet-connect">
+                <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M33.24 11.56C32.01 10.79 30.64 10.24 29.19 9.93C29.16 9.93 29.13 9.94 29.12 9.97C28.94 10.29 28.74 10.71 28.6 11.04C27.04 10.75 25.49 10.75 23.97 11.04C23.83 10.7 23.62 10.29 23.44 9.97C23.42 9.94 23.39 9.93 23.37 9.93C21.92 10.24 20.55 10.79 19.32 11.56C19.31 11.57 19.3 11.58 19.29 11.59C16.68 15.57 15.95 19.45 16.31 23.28C16.31 23.3 16.33 23.33 16.35 23.34C18.12 24.64 19.83 25.42 21.52 25.95C21.55 25.96 21.58 25.95 21.59 25.93C21.99 25.38 22.35 24.8 22.66 24.18C22.67 24.15 22.66 24.12 22.63 24.11C22.06 23.89 21.52 23.62 21 23.31C20.97 23.29 20.97 23.25 20.99 23.23C21.1 23.15 21.21 23.06 21.31 22.98C21.33 22.96 21.36 22.96 21.38 22.97C24.78 24.53 28.47 24.53 31.83 22.97C31.85 22.96 31.88 22.96 31.9 22.98C32 23.07 32.11 23.15 32.22 23.23C32.25 23.25 32.25 23.3 32.22 23.31C31.7 23.63 31.15 23.89 30.58 24.11C30.55 24.12 30.54 24.16 30.55 24.18C30.87 24.8 31.23 25.38 31.62 25.93C31.64 25.95 31.67 25.96 31.69 25.95C33.39 25.42 35.1 24.64 36.87 23.34C36.89 23.33 36.9 23.31 36.91 23.28C37.33 18.85 36.19 15 33.27 11.59C33.26 11.58 33.25 11.57 33.24 11.56Z" fill="white" opacity="0.9"/>
+                </svg>
+                <span id="wallet-btn-text">Connect Phantom</span>
+            </button>
+            <p id="wallet-status" style="margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:rgba(255,255,255,0.3); letter-spacing:0.1em; min-height:1.2em;"></p>
+        </div>
+
+        <!-- MoonPay pill -->
+        <div style="text-align:center; margin-bottom:3rem;">
+            <div class="moonpay-pill">
+                <span>No crypto? No problem.</span>
+                <a href="https://www.moonpay.com/buy/sol" target="_blank" rel="noopener">Buy SOL with card via MoonPay â</a>
+            </div>
+        </div>
+
+        <p style="text-align:center; font-family:'Outfit',sans-serif; font-weight:800; font-size:clamp(1.8rem,4vw,2.8rem); color:#fff; letter-spacing:-0.03em; margin-bottom:0.5rem;">Only 60 will ever exist.</p>
+        <p style="text-align:center; font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.2em; color:rgba(255,255,255,0.3); margin-bottom:3rem;">Choose your tier</p>
+
+        <!-- Mint Cards -->
+        <div class="mint-grid">
+
+            <!-- Egg -->
+            <div class="mint-card" style="box-shadow: 0 0 0 transparent;" onmouseover="this.style.boxShadow='0 20px 60px rgba(255,184,0,0.08)'" onmouseout="this.style.boxShadow='0 0 0 transparent'">
+                <div class="mint-card-video">
+                    <video autoplay muted loop playsinline poster="../hero-poster.jpg"><source src="../nft-videos/mint-egg-video.mp4" type="video/mp4"></video>
+                    <div class="fade"></div>
+                </div>
+                <div class="mint-card-body">
+                    <p class="tier-label" style="color:var(--gold);">Egg Tier</p>
+                    <div class="tier-price" style="color:var(--gold);">2.5</div>
+                    <p class="tier-sol">SOL</p>
+                    <div class="tier-features">
+                        <div class="tier-feature"><span style="color:var(--gold);">â¦</span><span>Genesis KIN Avatar</span></div>
+                        <div class="tier-feature"><span style="color:var(--gold);">â¦</span><span>1 Month Hatchling + Supermemory Pro</span></div>
+                        <div class="tier-feature"><span style="color:var(--gold);">â¦</span><span>25% Lifetime Discount</span></div>
+                        <div class="tier-feature"><span style="color:var(--gold);">â¦</span><span>1% Lifetime Solana Rewards</span></div>
+                    </div>
+                    <p class="tier-avail">20 Available</p>
+                    <button onclick="mintKIN('egg')" class="mint-btn" data-tier="egg" style="border:1px solid rgba(255,184,0,0.3); color:var(--gold);" onmouseover="this.style.background='rgba(255,184,0,0.08)'; this.style.borderColor='var(--gold)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255,184,0,0.3)'">Mint Egg â 2.5 SOL</button>
+                </div>
+            </div>
+
+            <!-- Hatchling -->
+            <div class="mint-card" style="box-shadow: 0 0 0 transparent;" onmouseover="this.style.boxShadow='0 20px 60px rgba(0,240,255,0.1)'" onmouseout="this.style.boxShadow='0 0 0 transparent'">
+                <div class="mint-card-video">
+                    <video autoplay muted loop playsinline poster="../hero-poster.jpg"><source src="../nft-videos/mint-hatch-video.mp4" type="video/mp4"></video>
+                    <div class="fade"></div>
+                    <div class="popular-badge">Most Popular</div>
+                </div>
+                <div class="mint-card-body">
+                    <p class="tier-label" style="color:var(--cyan);">Hatchling Tier</p>
+                    <div class="tier-price" style="color:var(--cyan);">5.3</div>
+                    <p class="tier-sol">SOL</p>
+                    <div class="tier-features">
+                        <div class="tier-feature"><span style="color:var(--cyan);">â¦</span><span>Genesis KIN Avatar</span></div>
+                        <div class="tier-feature"><span style="color:var(--cyan);">â¦</span><span>3 Months Hatchling + Supermemory Pro</span></div>
+                        <div class="tier-feature"><span style="color:var(--cyan);">â¦</span><span>25% Lifetime Discount</span></div>
+                        <div class="tier-feature"><span style="color:var(--cyan);">â¦</span><span>2% Lifetime Solana Rewards</span></div>
+                    </div>
+                    <p class="tier-avail">20 Available</p>
+                    <button onclick="mintKIN('hatchling')" class="mint-btn" data-tier="hatchling" style="background:rgba(0,240,255,0.08); border:1px solid rgba(0,240,255,0.3); color:var(--cyan);" onmouseover="this.style.background='rgba(0,240,255,0.15)'; this.style.borderColor='var(--cyan)'" onmouseout="this.style.background='rgba(0,240,255,0.08)'; this.style.borderColor='rgba(0,240,255,0.3)'">Mint Hatchling â 5.3 SOL</button>
+                </div>
+            </div>
+
+            <!-- Elder -->
+            <div class="mint-card" style="box-shadow: 0 0 0 transparent;" onmouseover="this.style.boxShadow='0 20px 60px rgba(255,0,170,0.08)'" onmouseout="this.style.boxShadow='0 0 0 transparent'">
+                <div class="mint-card-video">
+                    <video autoplay muted loop playsinline poster="../hero-poster.jpg"><source src="../nft-videos/mint-elder-video.mp4" type="video/mp4"></video>
+                    <div class="fade"></div>
+                </div>
+                <div class="mint-card-body">
+                    <p class="tier-label" style="color:var(--magenta);">Elder Tier</p>
+                    <div class="tier-price" style="color:var(--magenta);">8.3</div>
+                    <p class="tier-sol">SOL</p>
+                    <div class="tier-features">
+                        <div class="tier-feature"><span style="color:var(--magenta);">â¦</span><span>Genesis KIN Avatar</span></div>
+                        <div class="tier-feature"><span style="color:var(--magenta);">â¦</span><span>3 Months Elder + Supermemory Pro</span></div>
+                        <div class="tier-feature"><span style="color:var(--magenta);">â¦</span><span>25% Lifetime Discount</span></div>
+                        <div class="tier-feature"><span style="color:var(--magenta);">â¦</span><span>3% Lifetime Solana Rewards</span></div>
+                    </div>
+                    <p class="tier-avail">20 Available</p>
+                    <button onclick="mintKIN('elder')" class="mint-btn" data-tier="elder" style="border:1px solid rgba(255,0,170,0.3); color:var(--magenta);" onmouseover="this.style.background='rgba(255,0,170,0.08)'; this.style.borderColor='var(--magenta)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255,0,170,0.3)'">Mint Elder â 8.3 SOL</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Founders Reward -->
+        <div style="max-width:900px; margin:5rem auto 0; text-align:center;">
+            <div class="founders-toggle" onclick="const d=document.getElementById('founders-detail'); const a=document.getElementById('founders-arrow'); if(d.style.maxHeight==='0px'){d.style.maxHeight='300px';d.style.opacity='1';a.style.transform='rotate(180deg)'}else{d.style.maxHeight='0px';d.style.opacity='0';a.style.transform='rotate(0deg)'}">
+                <span style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1rem; color:var(--gold);">The Founders Reward</span>
+                <span id="founders-arrow" style="color:var(--gold); font-size:0.7rem; transition:transform 0.3s ease;">â¼</span>
+            </div>
+            <div id="founders-detail" style="max-height:0px; opacity:0; overflow:hidden; transition:max-height 0.5s ease, opacity 0.4s ease; padding:0 1rem;">
+                <div style="padding-top:1.5rem;">
+                    <p style="color:var(--text-muted); line-height:1.8;">KR8TIV follows a community-first distribution model built around the <strong style="color:var(--cyan);">$KR8TIV token</strong> and the Genesis NFT collection. Revenue flows through the ecosystem â <strong style="color:#fff;">75% token holders, 5% Genesis holders forever.</strong></p>
+                    <p style="margin-top:1rem; color:var(--text-muted); line-height:1.8;">The Genesis collection is the <strong style="color:#fff;">only revenue-participating collection KR8TIV will ever create.</strong> Future collections will be standard collectibles. Genesis is Genesis.</p>
+                    <p style="margin-top:1.5rem;"><a href="https://kr8tiv.ai" target="_blank" rel="noopener" style="color:var(--cyan); font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:0.05em;">Learn more about KR8TIV AI â</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Genesis Six Bloodlines -->
+    <section style="padding:6rem 2rem; max-width:1400px; margin:0 auto;">
+        <h2 style="text-align:center; font-family:'Outfit',sans-serif; font-weight:800; font-size:clamp(2.5rem,5vw,4rem); color:#fff; letter-spacing:-0.04em; margin-bottom:0.5rem;">The Genesis Six</h2>
+        <p style="text-align:center; font-family:'JetBrains Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.2em; color:rgba(255,255,255,0.3); margin-bottom:4rem;">Choose your bloodline</p>
+        <div class="bloodline-grid">
+
+            <div class="bloodline-card">
+                <div class="bloodline-video"><video autoplay muted loop playsinline poster="../mischief-video-poster.jpg"><source src="../mischief-video.mp4" type="video/mp4"></video></div>
+                <h3 class="bloodline-name">Mischief</h3>
+                <p class="bloodline-type">Glitch Pup</p>
+                <p class="bloodline-desc">Family companion & personal brand whisperer. Bedtime stories, calendars, and social posts.</p>
+            </div>
+
+            <div class="bloodline-card">
+                <div class="bloodline-video"><video autoplay muted loop playsinline poster="../vortex-video-poster.jpg"><source src="../vortex-video.mp4" type="video/mp4"></video></div>
+                <h3 class="bloodline-name" style="color:var(--magenta);">Vortex</h3>
+                <p class="bloodline-type">Teal Dragon</p>
+                <p class="bloodline-desc">Your 24/7 CMO. Content, scheduling, analytics, and perfect brand voice.</p>
+            </div>
+
+            <div class="bloodline-card">
+                <div class="bloodline-video"><video autoplay muted loop playsinline poster="../forge-video-poster.jpg"><source src="../forge-video.mp4" type="video/mp4"></video></div>
+                <h3 class="bloodline-name" style="color:var(--gold);">Forge</h3>
+                <p class="bloodline-type">Cyber Unicorn</p>
+                <p class="bloodline-desc">Developer's best friend. Debugs at 3am, architects projects, writes docs.</p>
+            </div>
+
+            <div class="bloodline-card">
+                <div class="bloodline-video"><video autoplay muted loop playsinline poster="../aether-video-poster.jpg"><source src="../aether-video.mp4" type="video/mp4"></video></div>
+                <h3 class="bloodline-name" style="color:#a855f7;">Aether</h3>
+                <p class="bloodline-type">Frost Ape</p>
+                <p class="bloodline-desc">Infinite creative spark. Scripts, newsletters, books, marketing copy, stories.</p>
+            </div>
+
+            <div class="bloodline-card">
+                <div class="bloodline-video"><video autoplay muted loop playsinline poster="../catalyst-video-poster.jpg"><source src="../catalyst-video.mp4" type="video/mp4"></video></div>
+                <h3 class="bloodline-name" style="color:#f97316;">Catalyst</h3>
+                <p class="bloodline-type">Cosmic Blob</p>
+                <p class="bloodline-desc">Wealth & growth coach. Markets, habits, investments, and life automation.</p>
+            </div>
+
+            <div class="bloodline-card">
+                <div class="bloodline-video"><video autoplay muted loop playsinline poster="../cipher-video-poster.jpg"><source src="../cipher-video.mp4" type="video/mp4"></video></div>
+                <h3 class="bloodline-name" style="color:var(--cyan);">Cipher</h3>
+                <p class="bloodline-type">Code Kraken</p>
+                <p class="bloodline-desc">Eight tentacles. Zero pixels out of place. Frontend architect and creative tech.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mint-footer">
+        <a href="/">â Back to KIN</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="https://kr8tiv.ai" target="_blank" rel="noopener">KR8TIV AI</a>
+        <a href="https://x.com/kr8tivai" target="_blank" rel="noopener">@kr8tivai</a>
+        <p style="margin-top:2rem; font-family:'JetBrains Mono',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.2);">Â© 2026 KR8TIV AI. All rights reserved.</p>
+    </footer>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
+
+    <!-- Wallet Connect & Mint Logic -->
+    <script>
+    (function() {
+        'use strict';
+
+        const TREASURY = '7BLHKsHRGjsTKQdZYaC3tRDeUChJ9E2XsMPpg2Tv23cf';
+        const SOLANA_RPC = String(window.KIN_SOLANA_RPC || 'https://api.mainnet-beta.solana.com');
+        const MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
+
+        const TIERS = {
+            egg: { name: 'Egg', sol: 2.5, color: '#FFB800' },
+            hatchling: { name: 'Hatchling', sol: 5.3, color: '#00F0FF' },
+            elder: { name: 'Elder', sol: 8.3, color: '#FF00AA' }
+        };
+
+        const tierAvailability = {
+            egg: true,
+            hatchling: true,
+            elder: true
+        };
+
+        function buildMintApiCandidates() {
+            const candidates = [];
+            const explicitBase = String(
+                window.KIN_MINT_API_BASE ||
+                document.querySelector('meta[name="kin-mint-api-base"]')?.content ||
+                ''
+            ).trim();
+
+            if (explicitBase) {
+                candidates.push(explicitBase.replace(/\/+$/, ''));
+            }
+
+            const origin = window.location.origin;
+            candidates.push(`${origin}/api/mint`);
+
+            const pathname = window.location.pathname || '/';
+            const pageDir = pathname.endsWith('/') ? pathname : pathname.replace(/\/[^/]*$/, '/');
+            candidates.push(`${origin}${pageDir}api/mint`);
+
+            return [...new Set(candidates)];
+        }
+
+        const MINT_API_BASE_CANDIDATES = buildMintApiCandidates();
+        let activeMintApiBase = null;
+        let connectedWallet = null;
+        let provider = null;
+
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        function getProvider() {
+            if (window.phantom?.solana?.isPhantom) return window.phantom.solana;
+            if (window.solana?.isPhantom) return window.solana;
+            return null;
+        }
+
+        function setMintButtonState(button, enabled) {
+            if (!button) return;
+            button.style.opacity = enabled ? '1' : '0.45';
+            button.style.pointerEvents = enabled ? 'auto' : 'none';
+            button.disabled = !enabled;
+        }
+
+        function defaultButtonLabel(tier) {
+            const tierInfo = TIERS[tier];
+            return `Mint ${tierInfo.name} -- ${tierInfo.sol} SOL`;
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + (type || '');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function updateUI() {
+            const btn = document.getElementById('wallet-connect-btn');
+            const btnText = document.getElementById('wallet-btn-text');
+            const status = document.getElementById('wallet-status');
+            const mintButtons = document.querySelectorAll('.mint-btn');
+
+            if (connectedWallet) {
+                const addr = connectedWallet.toString();
+                btnText.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
+                btn.classList.add('connected');
+                status.textContent = 'Wallet connected. Choose your tier.';
+                status.style.color = 'var(--cyan)';
+
+                mintButtons.forEach((button) => {
+                    const tier = button.dataset.tier;
+                    const available = Boolean(tierAvailability[tier]);
+                    button.textContent = available ? defaultButtonLabel(tier) : 'Sold Out';
+                    setMintButtonState(button, available);
+                });
+            } else {
+                btnText.textContent = 'Connect Phantom';
+                btn.classList.remove('connected');
+                status.textContent = '';
+            }
+        }
+
+        function openInPhantom() {
+            const currentUrl = encodeURIComponent(window.location.href);
+            const phantomUrl = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+            window.location.href = phantomUrl;
+        }
+
+        async function fetchJson(url, options) {
+            const response = await fetch(url, options);
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || payload.ok === false) {
+                throw new Error(payload.error || 'Request failed');
+            }
+            return payload;
+        }
+
+        async function refreshMintConfig() {
+            try {
+                let config = null;
+                let lastError = null;
+                const candidates = activeMintApiBase ? [activeMintApiBase] : MINT_API_BASE_CANDIDATES;
+
+                for (const base of candidates) {
+                    try {
+                        config = await fetchJson(`${base}/config`);
+                        activeMintApiBase = base;
+                        break;
+                    } catch (error) {
+                        lastError = error;
+                    }
+                }
+
+                if (!config) {
+                    throw lastError || new Error('Mint API config request failed');
+                }
+
+                ['egg', 'hatchling', 'elder'].forEach((tier) => {
+                    tierAvailability[tier] = Number(config?.tiers?.[tier]?.available ?? 0) > 0;
+                    const button = document.querySelector(`.mint-btn[data-tier="${tier}"]`);
+                    if (!button) return;
+                    if (!tierAvailability[tier]) {
+                        button.textContent = 'Sold Out';
+                        setMintButtonState(button, false);
+                    } else if (!connectedWallet) {
+                        button.textContent = defaultButtonLabel(tier);
+                        setMintButtonState(button, true);
+                    }
+                });
+            } catch (error) {
+                const status = document.getElementById('wallet-status');
+                status.textContent = 'Mint API not reachable. Set KIN_MINT_API_BASE to your deployed mint API endpoint.';
+                status.style.color = 'var(--magenta)';
+            }
+        }
+
+        window.connectWallet = async function() {
+            provider = getProvider();
+
+            if (!provider && isMobile()) {
+                const status = document.getElementById('wallet-status');
+                status.textContent = 'Opening in Phantom wallet...';
+                status.style.color = 'var(--gold)';
+                openInPhantom();
+                return;
+            }
+
+            if (!provider) {
+                const status = document.getElementById('wallet-status');
+                status.textContent = 'Phantom not found. Opening install page...';
+                status.style.color = 'var(--gold)';
+                setTimeout(() => window.open('https://phantom.app/', '_blank'), 800);
+                return;
+            }
+
+            try {
+                const resp = await provider.connect();
+                connectedWallet = resp.publicKey;
+                updateUI();
+                showToast('Wallet connected', 'success');
+            } catch (err) {
+                const status = document.getElementById('wallet-status');
+                status.textContent = err.code === 4001
+                    ? 'Connection declined. Click to try again.'
+                    : 'Connection failed. Please try again.';
+                status.style.color = 'var(--magenta)';
+            }
+        };
+
+        window.mintKIN = async function(tier) {
+            if (!connectedWallet) {
+                await window.connectWallet();
+                if (!connectedWallet) return;
+            }
+
+            if (!tierAvailability[tier]) {
+                const status = document.getElementById('wallet-status');
+                status.textContent = `${TIERS[tier].name} is sold out.`;
+                status.style.color = 'var(--magenta)';
+                return;
+            }
+
+            provider = getProvider();
+            if (!provider) {
+                showToast('Wallet not available', 'error');
+                return;
+            }
+
+            const tierInfo = TIERS[tier];
+            const button = document.querySelector(`.mint-btn[data-tier="${tier}"]`);
+            const originalText = button.textContent;
+            const status = document.getElementById('wallet-status');
+            let delivered = false;
+
+            try {
+                setMintButtonState(button, false);
+                button.textContent = 'Preparing...';
+                status.textContent = `Creating ${tierInfo.name} mint intent...`;
+                status.style.color = tierInfo.color;
+
+                const buyerWallet = connectedWallet.toString();
+                if (!activeMintApiBase) {
+                    await refreshMintConfig();
+                }
+                if (!activeMintApiBase) {
+                    throw new Error('Mint API unavailable. Transaction blocked before payment.');
+                }
+
+                const intent = await fetchJson(`${activeMintApiBase}/intent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tier, buyerWallet })
+                });
+
+                const connection = new solanaWeb3.Connection(SOLANA_RPC, 'confirmed');
+                const transaction = new solanaWeb3.Transaction();
+                transaction.add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: connectedWallet,
+                        toPubkey: new solanaWeb3.PublicKey(TREASURY),
+                        lamports: Number(intent.lamports)
+                    })
+                );
+
+                transaction.add(
+                    new solanaWeb3.TransactionInstruction({
+                        keys: [],
+                        programId: new solanaWeb3.PublicKey(MEMO_PROGRAM_ID),
+                        data: new TextEncoder().encode(`KIN:${intent.intentId}`)
+                    })
+                );
+
+                const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = connectedWallet;
+
+                button.textContent = 'Confirm in Wallet...';
+                status.textContent = `Approve ${intent.sol} SOL payment in Phantom...`;
+
+                let signature;
+                if (typeof provider.signAndSendTransaction === 'function') {
+                    const txResult = await provider.signAndSendTransaction(transaction);
+                    signature = txResult.signature;
+                } else {
+                    const signed = await provider.signTransaction(transaction);
+                    signature = await connection.sendRawTransaction(signed.serialize(), {
+                        skipPreflight: false,
+                        preflightCommitment: 'confirmed'
+                    });
+                }
+
+                button.textContent = 'Confirming Payment...';
+                status.textContent = 'Payment sent. Waiting for confirmation...';
+
+                const confirmation = await connection.confirmTransaction(
+                    { signature, blockhash, lastValidBlockHeight },
+                    'confirmed'
+                );
+
+                if (confirmation.value.err) {
+                    throw new Error('Payment transaction failed on-chain');
+                }
+
+                button.textContent = 'Delivering NFT...';
+                status.textContent = 'Payment confirmed. Delivering your cNFT...';
+
+                const delivery = await fetchJson(`${activeMintApiBase}/finalize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        intentId: intent.intentId,
+                        buyerWallet,
+                        paymentSignature: signature
+                    })
+                });
+
+                button.textContent = 'Delivered';
+                button.style.background = 'rgba(0,240,255,0.15)';
+                button.style.borderColor = 'var(--cyan)';
+                button.style.color = 'var(--cyan)';
+                button.style.opacity = '1';
+                status.innerHTML = `${tierInfo.name} delivered. <a href="${delivery.paymentExplorer}" target="_blank" rel="noopener" style="color:var(--cyan); text-decoration:underline;">Payment</a> | <a href="${delivery.deliveryExplorer}" target="_blank" rel="noopener" style="color:var(--cyan); text-decoration:underline;">Delivery</a>`;
+                status.style.color = 'var(--cyan)';
+                showToast(`${tierInfo.name} delivered`, 'success');
+                delivered = true;
+
+                await refreshMintConfig();
+            } catch (error) {
+                button.textContent = originalText;
+                setMintButtonState(button, true);
+
+                if (error.code === 4001 || error.message?.toLowerCase().includes('rejected')) {
+                    status.textContent = 'Transaction cancelled. No SOL was sent.';
+                    showToast('Transaction cancelled', 'error');
+                } else if (error.message?.toLowerCase().includes('sold out')) {
+                    tierAvailability[tier] = false;
+                    button.textContent = 'Sold Out';
+                    setMintButtonState(button, false);
+                    status.textContent = `${tierInfo.name} is sold out.`;
+                    showToast('Tier sold out', 'error');
+                } else if (error.message?.toLowerCase().includes('insufficient')) {
+                    status.textContent = `Insufficient balance. ${tierInfo.name} requires ${tierInfo.sol} SOL + gas.`;
+                    showToast('Insufficient SOL balance', 'error');
+                } else {
+                    console.error('Mint error:', error);
+                    status.textContent = error.message || 'Mint failed. Please try again.';
+                    showToast('Mint failed', 'error');
+                }
+                status.style.color = 'var(--magenta)';
+            } finally {
+                if (!delivered) {
+                    button.textContent = originalText;
+                    if (tierAvailability[tier]) {
+                        setMintButtonState(button, true);
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            await refreshMintConfig();
+
+            provider = getProvider();
+            if (provider) {
+                try {
+                    const resp = await provider.connect({ onlyIfTrusted: true });
+                    connectedWallet = resp.publicKey;
+                    updateUI();
+                } catch (_error) {
+                    updateUI();
+                }
+
+                provider.on('disconnect', () => {
+                    connectedWallet = null;
+                    updateUI();
+                });
+                provider.on('accountChanged', (publicKey) => {
+                    connectedWallet = publicKey || null;
+                    updateUI();
+                });
+            }
+
+            const allVideos = document.querySelectorAll('video');
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.play().catch(() => {});
+                    }
+                });
+            }, { rootMargin: '300px' });
+
+            allVideos.forEach((video) => videoObserver.observe(video));
+        });
+    })();
+    </script>
+</body>
+</html>
+

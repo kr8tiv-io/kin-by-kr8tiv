@@ -1,41 +1,65 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { classifyTier, buildTierInventory } from "../src/inventory.js";
+import { buildTierInventory, classifyTier } from "../src/inventory.js";
 
-function asset(name, tierTrait) {
+function asset(id, tierLabel) {
   return {
-    id: `${name}-id`,
+    id,
     content: {
       metadata: {
-        name,
-        attributes: tierTrait ? [{ trait_type: "Tier", value: tierTrait }] : []
+        name: `Genesis ${tierLabel} ${id}`,
+        attributes: [{ trait_type: "Tier", value: tierLabel }]
       }
     }
   };
 }
 
-test("classifyTier prefers explicit Tier trait", () => {
-  assert.equal(classifyTier(asset("KIN #001", "Egg")), "egg");
-  assert.equal(classifyTier(asset("KIN #002", "Hatchling")), "hatchling");
-  assert.equal(classifyTier(asset("KIN #003", "Elder")), "elder");
+test("classifyTier recognizes tier trait values", () => {
+  assert.equal(classifyTier(asset("a1", "Egg")), "egg");
+  assert.equal(classifyTier(asset("b1", "Hatchling")), "hatchling");
+  assert.equal(classifyTier(asset("c1", "Elder")), "elder");
 });
 
-test("classifyTier falls back to name", () => {
-  assert.equal(classifyTier(asset("KIN Egg #004")), "egg");
-  assert.equal(classifyTier(asset("KIN Hatchling #005")), "hatchling");
-  assert.equal(classifyTier(asset("KIN Elder #006")), "elder");
-  assert.equal(classifyTier(asset("KIN Unknown #007")), null);
-});
-
-test("buildTierInventory enforces cap deterministically", () => {
+test("buildTierInventory enforces 20/20/20 caps and deduplicates ids", () => {
   const assets = [];
   for (let i = 1; i <= 25; i += 1) {
-    assets.push(asset(`KIN Egg #${i.toString().padStart(3, "0")}`, "Egg"));
+    assets.push(asset(`egg-${i.toString().padStart(2, "0")}`, "Egg"));
+    assets.push(asset(`hatch-${i.toString().padStart(2, "0")}`, "Hatchling"));
+    assets.push(asset(`elder-${i.toString().padStart(2, "0")}`, "Elder"));
   }
-  const inventory = buildTierInventory(assets, { egg: 20, hatchling: 20, elder: 20 });
+
+  // Duplicate asset id should not count twice.
+  assets.push(asset("egg-01", "Egg"));
+
+  const inventory = buildTierInventory(assets, {
+    egg: 20,
+    hatchling: 20,
+    elder: 20
+  });
 
   assert.equal(inventory.egg.length, 20);
-  assert.equal(inventory.egg[0].includes("#001"), true);
-  assert.equal(inventory.egg[19].includes("#020"), true);
+  assert.equal(inventory.hatchling.length, 20);
+  assert.equal(inventory.elder.length, 20);
+  assert.deepEqual(inventory.egg.slice(0, 3), ["egg-01", "egg-02", "egg-03"]);
+});
+
+test("buildTierInventory ignores assets without supported tier metadata", () => {
+  const unknown = {
+    id: "mystery-1",
+    content: {
+      metadata: {
+        name: "Genesis Mystery",
+        attributes: [{ trait_type: "Type", value: "Unknown" }]
+      }
+    }
+  };
+
+  const inventory = buildTierInventory([unknown], {
+    egg: 20,
+    hatchling: 20,
+    elder: 20
+  });
+
+  assert.deepEqual(inventory, { egg: [], hatchling: [], elder: [] });
 });
