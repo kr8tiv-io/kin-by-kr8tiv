@@ -28,3 +28,12 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Runtime secrets and mint-api state
+.env
+.env.*
+mint-api/.env
+mint-api/.env.*
+node_modules/
+mint-api/node_modules/
+mint-api/data/*.json
