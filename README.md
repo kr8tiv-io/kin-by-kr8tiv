@@ -35,6 +35,7 @@ The backend enforces one purchase equals one NFT delivery.
 - Tier classification/capping: `mint-api/src/inventory.js`
 - Solana + Bubblegum transfer: `mint-api/src/chain.js`
 - Transparency notes: `MINT_CONTRACT_TRANSPARENCY.md`
+- Staking contract status: `STAKING_CONTRACT_STATUS.md`
 
 ## Local Run
 
