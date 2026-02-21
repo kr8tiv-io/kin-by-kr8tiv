@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -353,57 +353,19 @@
     <!-- Toast notification -->
     <div id="toast" class="toast"></div>
 
-    <!-- Solana Web3.js -->
-    <script src="https://unpkg.com/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
-
-    <!-- Wallet Connect & Mint Logic -->
+        <!-- Metaplex Candy Machine Mint Bundle -->
+    <script src="kin-mint.41ca3261.js" onerror="document.getElementById('wallet-status').textContent='Error: Mint module failed to load. Please hard refresh (Ctrl+Shift+R).'; document.getElementById('wallet-status').style.color='#FF00AA';"></script>
+<!-- Wallet Connect & Candy Machine Mint Logic -->
     <script>
     (function() {
         'use strict';
 
-        const TREASURY = '7BLHKsHRGjsTKQdZYaC3tRDeUChJ9E2XsMPpg2Tv23cf';
-        const SOLANA_RPC = String(
-            window.KIN_SOLANA_RPC || 'https://madelena-tbtq8y-fast-mainnet.helius-rpc.com'
-        );
-        const MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
-
         const TIERS = {
-            egg: { name: 'Egg', sol: 2.5, color: '#FFB800' },
-            hatchling: { name: 'Hatchling', sol: 5.3, color: '#00F0FF' },
-            elder: { name: 'Elder', sol: 8.3, color: '#FF00AA' }
-        };
-        const LAMPORTS_PER_SOL = 1000000000;
-
-        const tierAvailability = {
-            egg: true,
-            hatchling: true,
-            elder: true
+            egg:       { name: 'Egg',       sol: 2.5, color: '#FFB800', group: 'egg' },
+            hatchling: { name: 'Hatchling', sol: 5.3, color: '#00F0FF', group: 'hatch' },
+            elder:     { name: 'Elder',     sol: 8.3, color: '#FF00AA', group: 'elder' }
         };
 
-        function buildMintApiCandidates() {
-            const candidates = [];
-            const explicitBase = String(
-                window.KIN_MINT_API_BASE ||
-                document.querySelector('meta[name="kin-mint-api-base"]')?.content ||
-                ''
-            ).trim();
-
-            if (explicitBase) {
-                candidates.push(explicitBase.replace(/\/+$/, ''));
-            }
-
-            const origin = window.location.origin;
-            candidates.push(`${origin}/api/mint`);
-
-            const pathname = window.location.pathname || '/';
-            const pageDir = pathname.endsWith('/') ? pathname : pathname.replace(/\/[^/]*$/, '/');
-            candidates.push(`${origin}${pageDir}api/mint`);
-
-            return [...new Set(candidates)];
-        }
-
-        const MINT_API_BASE_CANDIDATES = buildMintApiCandidates();
-        let activeMintApiBase = null;
         let connectedWallet = null;
         let provider = null;
 
@@ -415,44 +377,6 @@
             if (window.phantom?.solana?.isPhantom) return window.phantom.solana;
             if (window.solana?.isPhantom) return window.solana;
             return null;
-        }
-
-        function setMintButtonState(button, enabled) {
-            if (!button) return;
-            button.style.opacity = enabled ? '1' : '0.45';
-            button.style.pointerEvents = enabled ? 'auto' : 'none';
-            button.disabled = !enabled;
-        }
-
-        function defaultButtonLabel(tier) {
-            const tierInfo = TIERS[tier];
-            return `Mint ${tierInfo.name} -- ${tierInfo.sol} SOL`;
-        }
-
-        function expectedLamportsForTier(tier) {
-            return Math.round(TIERS[tier].sol * LAMPORTS_PER_SOL);
-        }
-
-        function assertTrustedTreasuryAddress(value, source) {
-            const normalized = String(value ?? '').trim();
-            if (normalized !== TREASURY) {
-                throw new Error(`Untrusted treasury from ${source}. Payment blocked.`);
-            }
-            return normalized;
-        }
-
-        function assertIntentPricingMatchesTier(tier, intent) {
-            const expectedLamports = expectedLamportsForTier(tier);
-            const expectedSol = TIERS[tier].sol;
-            const actualLamports = Number(intent?.lamports);
-            const actualSol = Number(intent?.sol);
-
-            if (!Number.isFinite(actualLamports) || actualLamports !== expectedLamports) {
-                throw new Error('Intent lamports do not match tier pricing. Payment blocked.');
-            }
-            if (!Number.isFinite(actualSol) || Math.abs(actualSol - expectedSol) > 1e-9) {
-                throw new Error('Intent SOL amount does not match tier pricing. Payment blocked.');
-            }
         }
 
         function showToast(message, type) {
@@ -467,21 +391,13 @@
             const btn = document.getElementById('wallet-connect-btn');
             const btnText = document.getElementById('wallet-btn-text');
             const status = document.getElementById('wallet-status');
-            const mintButtons = document.querySelectorAll('.mint-btn');
 
             if (connectedWallet) {
                 const addr = connectedWallet.toString();
                 btnText.textContent = addr.slice(0, 4) + '...' + addr.slice(-4);
                 btn.classList.add('connected');
-                status.textContent = 'Wallet connected. Choose your tier.';
+                status.textContent = 'Wallet connected - choose your tier below';
                 status.style.color = 'var(--cyan)';
-
-                mintButtons.forEach((button) => {
-                    const tier = button.dataset.tier;
-                    const available = Boolean(tierAvailability[tier]);
-                    button.textContent = available ? defaultButtonLabel(tier) : 'Sold Out';
-                    setMintButtonState(button, available);
-                });
             } else {
                 btnText.textContent = 'Connect Phantom';
                 btn.classList.remove('connected');
@@ -493,55 +409,6 @@
             const currentUrl = encodeURIComponent(window.location.href);
             const phantomUrl = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
             window.location.href = phantomUrl;
-        }
-
-        async function fetchJson(url, options) {
-            const response = await fetch(url, options);
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || payload.ok === false) {
-                throw new Error(payload.error || 'Request failed');
-            }
-            return payload;
-        }
-
-        async function refreshMintConfig() {
-            try {
-                let config = null;
-                let lastError = null;
-                const candidates = activeMintApiBase ? [activeMintApiBase] : MINT_API_BASE_CANDIDATES;
-
-                for (const base of candidates) {
-                    try {
-                        config = await fetchJson(`${base}/config`);
-                        activeMintApiBase = base;
-                        break;
-                    } catch (error) {
-                        lastError = error;
-                    }
-                }
-
-                if (!config) {
-                    throw lastError || new Error('Mint API config request failed');
-                }
-                assertTrustedTreasuryAddress(config?.treasury, 'mint config');
-
-                ['egg', 'hatchling', 'elder'].forEach((tier) => {
-                    tierAvailability[tier] = Number(config?.tiers?.[tier]?.available ?? 0) > 0;
-                    const button = document.querySelector(`.mint-btn[data-tier="${tier}"]`);
-                    if (!button) return;
-                    if (!tierAvailability[tier]) {
-                        button.textContent = 'Sold Out';
-                        setMintButtonState(button, false);
-                    } else if (!connectedWallet) {
-                        button.textContent = defaultButtonLabel(tier);
-                        setMintButtonState(button, true);
-                    }
-                });
-            } catch (error) {
-                const status = document.getElementById('wallet-status');
-                status.textContent = 'Mint API not reachable. Set KIN_MINT_API_BASE to your deployed mint API endpoint.';
-                status.style.color = 'var(--magenta)';
-            }
         }
 
         window.connectWallet = async function() {
@@ -557,7 +424,7 @@
 
             if (!provider) {
                 const status = document.getElementById('wallet-status');
-                status.textContent = 'Phantom not found. Opening install page...';
+                status.textContent = 'Phantom not found - opening install page...';
                 status.style.color = 'var(--gold)';
                 setTimeout(() => window.open('https://phantom.app/', '_blank'), 800);
                 return;
@@ -570,171 +437,129 @@
                 showToast('Wallet connected', 'success');
             } catch (err) {
                 const status = document.getElementById('wallet-status');
-                status.textContent = err.code === 4001
-                    ? 'Connection declined. Click to try again.'
-                    : 'Connection failed. Please try again.';
+                if (err.code === 4001) {
+                    status.textContent = 'Connection declined - click to try again.';
+                } else {
+                    status.textContent = 'Connection failed - please try again.';
+                }
                 status.style.color = 'var(--magenta)';
             }
         };
 
-        window.mintKIN = async function(tier) {
-            if (!connectedWallet) {
-                await window.connectWallet();
-                if (!connectedWallet) return;
-            }
-
-            if (!tierAvailability[tier]) {
-                const status = document.getElementById('wallet-status');
-                status.textContent = `${TIERS[tier].name} is sold out.`;
-                status.style.color = 'var(--magenta)';
-                return;
-            }
-
-            provider = getProvider();
-            if (!provider) {
-                showToast('Wallet not available', 'error');
-                return;
-            }
-
-            const tierInfo = TIERS[tier];
-            const button = document.querySelector(`.mint-btn[data-tier="${tier}"]`);
-            const originalText = button.textContent;
+        window.mintKIN = async function(tier, solAmount) {
             const status = document.getElementById('wallet-status');
-            let delivered = false;
+            const btn = document.querySelector('.mint-btn[data-tier="' + tier + '"]');
+            const originalText = btn ? btn.textContent : '';
+            const previousStatusReporter = window.__KIN_SET_STATUS;
 
             try {
-                setMintButtonState(button, false);
-                button.textContent = 'Preparing...';
-                status.textContent = `Creating ${tierInfo.name} mint intent...`;
+                status.textContent = 'Building transaction...';
+                status.style.color = 'var(--gold)';
+
+                if (!connectedWallet) {
+                    await window.connectWallet();
+                    if (!connectedWallet) return;
+                }
+
+                provider = getProvider();
+                if (!provider) {
+                    status.textContent = 'Error: Phantom wallet not detected';
+                    status.style.color = 'var(--magenta)';
+                    return;
+                }
+
+                const tierInfo = TIERS[tier];
+                btn.textContent = 'Minting...';
+                btn.style.opacity = '0.6';
+                btn.style.pointerEvents = 'none';
+
+                if (typeof window.mintFromCandyMachine !== 'function') {
+                    throw new Error('Mint module not loaded. Hard refresh the page.');
+                }
+
                 status.style.color = tierInfo.color;
+                window.__KIN_SET_STATUS = function(message) {
+                    status.textContent = message;
+                    status.style.color = tierInfo.color;
+                };
 
-                const buyerWallet = connectedWallet.toString();
-                if (!activeMintApiBase) {
-                    await refreshMintConfig();
-                }
-                if (!activeMintApiBase) {
-                    throw new Error('Mint API unavailable. Transaction blocked before payment.');
-                }
+                const result = await window.mintFromCandyMachine(tierInfo.group, provider);
 
-                const intent = await fetchJson(`${activeMintApiBase}/intent`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tier, buyerWallet })
-                });
-                if (!intent?.intentId) {
-                    throw new Error('Mint intent is missing intentId.');
-                }
-                const treasuryFromIntent = assertTrustedTreasuryAddress(intent?.treasury, 'mint intent');
-                assertIntentPricingMatchesTier(tier, intent);
+                btn.textContent = 'Minted';
+                btn.style.background = 'rgba(0,240,255,0.15)';
+                btn.style.borderColor = 'var(--cyan)';
+                btn.style.color = 'var(--cyan)';
+                btn.style.opacity = '1';
 
-                const connection = new solanaWeb3.Connection(SOLANA_RPC, 'confirmed');
-                const transaction = new solanaWeb3.Transaction();
-                transaction.add(
-                    solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: connectedWallet,
-                        toPubkey: new solanaWeb3.PublicKey(treasuryFromIntent),
-                        lamports: Number(intent.lamports)
-                    })
-                );
-
-                transaction.add(
-                    new solanaWeb3.TransactionInstruction({
-                        keys: [],
-                        programId: new solanaWeb3.PublicKey(MEMO_PROGRAM_ID),
-                        data: new TextEncoder().encode(`KIN:${intent.intentId}`)
-                    })
-                );
-
-                const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
-                transaction.recentBlockhash = blockhash;
-                transaction.feePayer = connectedWallet;
-
-                button.textContent = 'Confirm in Wallet...';
-                status.textContent = `Approve ${intent.sol} SOL payment in Phantom...`;
-
-                let signature;
-                if (typeof provider.signAndSendTransaction === 'function') {
-                    const txResult = await provider.signAndSendTransaction(transaction);
-                    signature = txResult.signature;
-                } else {
-                    const signed = await provider.signTransaction(transaction);
-                    signature = await connection.sendRawTransaction(signed.serialize(), {
-                        skipPreflight: false,
-                        preflightCommitment: 'confirmed'
-                    });
-                }
-
-                button.textContent = 'Confirming Payment...';
-                status.textContent = 'Payment sent. Waiting for confirmation...';
-
-                const confirmation = await connection.confirmTransaction(
-                    { signature, blockhash, lastValidBlockHeight },
-                    'confirmed'
-                );
-
-                if (confirmation.value.err) {
-                    throw new Error('Payment transaction failed on-chain');
-                }
-
-                button.textContent = 'Delivering NFT...';
-                status.textContent = 'Payment confirmed. Delivering your cNFT...';
-
-                const delivery = await fetchJson(`${activeMintApiBase}/finalize`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        intentId: intent.intentId,
-                        buyerWallet,
-                        paymentSignature: signature
-                    })
-                });
-
-                button.textContent = 'Delivered';
-                button.style.background = 'rgba(0,240,255,0.15)';
-                button.style.borderColor = 'var(--cyan)';
-                button.style.color = 'var(--cyan)';
-                button.style.opacity = '1';
-                status.innerHTML = `${tierInfo.name} delivered. <a href="${delivery.paymentExplorer}" target="_blank" rel="noopener" style="color:var(--cyan); text-decoration:underline;">Payment</a> | <a href="${delivery.deliveryExplorer}" target="_blank" rel="noopener" style="color:var(--cyan); text-decoration:underline;">Delivery</a>`;
+                const sigStr = String(result.signature);
+                status.innerHTML = tierInfo.name + ' KIN minted. <a href="https://solscan.io/tx/' + sigStr + '" target="_blank" style="color:var(--cyan); text-decoration:underline;">View on Solscan -></a>';
                 status.style.color = 'var(--cyan)';
-                showToast(`${tierInfo.name} delivered`, 'success');
-                delivered = true;
+                showToast(tierInfo.name + ' Genesis KIN minted', 'success');
+            } catch (err) {
+                if (btn) {
+                    btn.textContent = originalText;
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
 
-                await refreshMintConfig();
-            } catch (error) {
-                button.textContent = originalText;
-                setMintButtonState(button, true);
+                let errMsg = (err && err.message) ? err.message : String(err);
+                console.error('[KIN] Full error:', err);
 
-                if (error.code === 4001 || error.message?.toLowerCase().includes('rejected')) {
-                    status.textContent = 'Transaction cancelled. No SOL was sent.';
-                    showToast('Transaction cancelled', 'error');
-                } else if (error.message?.toLowerCase().includes('sold out')) {
-                    tierAvailability[tier] = false;
-                    button.textContent = 'Sold Out';
-                    setMintButtonState(button, false);
-                    status.textContent = `${tierInfo.name} is sold out.`;
-                    showToast('Tier sold out', 'error');
-                } else if (error.message?.toLowerCase().includes('insufficient')) {
-                    status.textContent = `Insufficient balance. ${tierInfo.name} requires ${tierInfo.sol} SOL + gas.`;
-                    showToast('Insufficient SOL balance', 'error');
+                if (err && (err.kind === 'wallet_rejected' || err.code === 4001 || errMsg.indexOf('rejected') !== -1 || errMsg.indexOf('User rejected') !== -1)) {
+                    status.textContent = 'Transaction cancelled - no SOL was sent.';
+                } else if (err && err.kind === 'simulation_failed') {
+                    status.textContent = errMsg;
+                } else if (err && err.kind === 'insufficient_balance') {
+                    if (typeof err.requiredLamports === 'number' && err.requiredSol) {
+                        status.textContent = 'Insufficient SOL. Need ' + err.requiredLamports + ' lamports (' + err.requiredSol + ' SOL) + fees.';
+                    } else {
+                        status.textContent = 'Insufficient SOL. Need ' + solAmount + ' SOL + ~0.01 gas.';
+                    }
                 } else {
-                    console.error('Mint error:', error);
-                    status.textContent = error.message || 'Mint failed. Please try again.';
-                    showToast('Mint failed', 'error');
+                    if (errMsg.length > 200) errMsg = errMsg.substring(0, 200) + '...';
+                    status.textContent = errMsg;
                 }
                 status.style.color = 'var(--magenta)';
+                showToast('Mint failed - see error below', 'error');
             } finally {
-                if (!delivered) {
-                    button.textContent = originalText;
-                    if (tierAvailability[tier]) {
-                        setMintButtonState(button, true);
-                    }
-                }
+                window.__KIN_SET_STATUS = previousStatusReporter;
             }
         };
 
         window.addEventListener('DOMContentLoaded', async () => {
-            await new Promise((resolve) => setTimeout(resolve, 200));
-            await refreshMintConfig();
+            await new Promise(r => setTimeout(r, 300));
+
+            if (typeof window.mintFromCandyMachine !== 'function') {
+                console.error('[KIN] Mint module not loaded');
+                const s = document.getElementById('wallet-status');
+                if (s) {
+                    s.textContent = 'Mint module loading error. Please hard refresh.';
+                    s.style.color = '#FF00AA';
+                }
+            } else {
+                console.log('[KIN] Mint module verified');
+                try {
+                    const state = await window.getCandyMachineState();
+                    if (state && state.isActive) {
+                        console.log('[KIN] On-chain groups:', (state.groups || []).join(', '));
+                        console.log('[KIN] Available:', state.itemsRemaining, '/', state.itemsAvailable);
+                    } else if (state && state.error) {
+                        const st = document.getElementById('wallet-status');
+                        if (st) {
+                            st.textContent = state.error;
+                            st.style.color = '#FF00AA';
+                        }
+                        document.querySelectorAll('.mint-btn').forEach(function(button) {
+                            button.disabled = true;
+                            button.style.pointerEvents = 'none';
+                            button.style.opacity = '0.45';
+                            button.textContent = 'Mint paused';
+                        });
+                    }
+                } catch (e) {
+                    console.warn('[KIN] Could not fetch state:', e);
+                }
+            }
 
             provider = getProvider();
             if (provider) {
@@ -742,30 +567,22 @@
                     const resp = await provider.connect({ onlyIfTrusted: true });
                     connectedWallet = resp.publicKey;
                     updateUI();
-                } catch (_error) {
-                    updateUI();
-                }
+                } catch (e) {}
 
-                provider.on('disconnect', () => {
-                    connectedWallet = null;
-                    updateUI();
-                });
-                provider.on('accountChanged', (publicKey) => {
-                    connectedWallet = publicKey || null;
-                    updateUI();
-                });
+                provider.on('disconnect', () => { connectedWallet = null; updateUI(); });
+                provider.on('accountChanged', (pk) => { connectedWallet = pk || null; updateUI(); });
             }
 
             const allVideos = document.querySelectorAll('video');
             const videoObserver = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
+                entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.play().catch(() => {});
                     }
                 });
             }, { rootMargin: '300px' });
 
-            allVideos.forEach((video) => videoObserver.observe(video));
+            allVideos.forEach(v => videoObserver.observe(v));
         });
     })();
     </script>
